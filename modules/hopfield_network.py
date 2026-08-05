@@ -1008,3 +1008,38 @@ def test_network(memory_list, weight_matrix, noise_level, synchronous=True):
         retrieved_patterns = retrieve_all_assync(noisies, len(memory_list[0]), weight_matrix, len(memory_list))
     vizualize(memory_list, noisies, retrieved_patterns, len(memory_list[0]), save=False)
     return None
+
+def see_synapses(weights_matrix):
+    """
+    Visualizes the synaptic weights of a Hopfield network as a heatmap.
+
+    Parameters
+    ----------
+    weights_matrix : numpy.ndarray
+        The weight matrix of the Hopfield network, typically of shape (N, N),
+        where N is the number of neurons.
+
+    Returns
+    -------
+    None
+        Displays the heatmap of synaptic weights and returns nothing.
+
+    Notes
+    -----
+    This function uses matplotlib to create a heatmap representation of the
+    synaptic weights. The color intensity indicates the strength of the weights,
+    with darker colors representing stronger connections.
+
+    Example
+    -------
+    see_synapses(weights)
+    """
+    plt.style.use('dark_background')
+    plt.imshow(weights_matrix, cmap='magma_r')  # colormap can be changed
+    cbar = plt.colorbar()
+    cbar.set_label("Neuron Correlation", fontsize=18)  # Label for colorbar
+    cbar.set_ticks([])  # Show colorbar ticks
+    plt.axis('off')  # Hide axes
+    plt.title("Brain's Synaptic Weights", fontsize=20)  # Title for the heatmap
+    plt.show()
+    return None
