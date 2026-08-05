@@ -251,12 +251,12 @@ def noisy_patterns(patterns_to_store,P, noise_level):
         List of noisy patterns.
     """
 
-    noisy_patterns = []
+    noisy_pattern = []
 
     for i in range(P):
-        noisy_patterns.append(add_noise(patterns_to_store[i], noise_level))
+        noisy_pattern.append(add_noise(patterns_to_store[i], noise_level))
 
-    return noisy_patterns
+    return noisy_pattern
 
 def retrieve_all_sync(noisy_patterns, num_neurons, weights, num_memories):
    
@@ -1001,10 +1001,10 @@ def test_network(memory_list, weight_matrix, noise_level, synchronous=True):
 
     test_network(memories, weights, noise_level=0.25, synchronous=False)
     """
-    noisy_patterns = noisy_patterns(memory_list, len(memory_list), noise_level=noise_level)
+    noisies = noisy_patterns(memory_list, len(memory_list), noise_level=noise_level)
     if synchronous:
-        retrieved_patterns = retrieve_all_sync(noisy_patterns, len(memory_list[0]), weight_matrix, len(memory_list))
+        retrieved_patterns = retrieve_all_sync(noisies, len(memory_list[0]), weight_matrix, len(memory_list))
     else:
-        retrieved_patterns = retrieve_all_assync(noisy_patterns, len(memory_list[0]), weight_matrix, len(memory_list))
-    vizualize(memory_list, noisy_patterns, retrieved_patterns, len(memory_list[0]), save=False)
+        retrieved_patterns = retrieve_all_assync(noisies, len(memory_list[0]), weight_matrix, len(memory_list))
+    vizualize(memory_list, noisies, retrieved_patterns, len(memory_list[0]), save=False)
     return None
