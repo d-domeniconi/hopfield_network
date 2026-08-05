@@ -303,7 +303,7 @@ def vizualize(original_patterns, noisy_patterns,retrieved_patterns, N, save):
         Stored patterns.
     noisy_patterns : list of ndarray
         Noisy input patterns.
-    retrieved_patterns : list of ndarray
+    retrieved_patterns : list ofweights = hp.train(len(vetor_ufsc), memories) ndarray
         Patterns after retrieval.
     N : int
         Number of neurons per pattern.
