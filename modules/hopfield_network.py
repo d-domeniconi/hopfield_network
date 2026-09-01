@@ -176,31 +176,24 @@ def visualize_pattern(pattern, title):
   plt.ylim([-1.1, 1.1])
   plt.grid(axis='y')
 
-def patterns(N, P):
-
+def patterns(num_padroes, tamanho_padrao):
     """
-    Generate random bipolar patterns.
-
-    Parameters
-    ----------
-    N : int
-        Number of neurons per pattern.
-    P : int
-        Number of patterns to generate.
-
-    Returns
-    -------
-    list of ndarray
-        List of P random patterns with values ±1.
+    Gera padrões binários aleatórios compostos por -1 e 1.
+    
+    Parâmetros:
+    num_padroes (int): Quantidade de padrões na lista (ex: P memórias).
+    tamanho_padrao (int): Comprimento de cada padrão (ex: N neurônios/spins).
+    
+    Retorna:
+    numpy.ndarray: Matriz onde cada linha é um padrão armazenado.
     """
-
-    patterns_to_store = []
-    i = 0
-
-    for i in range(P):
-        patterns_to_store.append(np.random.choice([1, -1], size=N))
-
-    return patterns_to_store
+    # Escolhe aleatoriamente entre -1 e +1 para preencher a matriz
+    padroes = np.random.choice([-1, 1], size=(num_padroes, tamanho_padrao))
+    
+    # Caso precise estritamente de uma lista nativa do Python (lista de listas):
+    # return padroes.tolist()
+    
+    return padroes
 
 def add_noise(pattern, noise_level):
     """Add noise to a pattern by flipping a fraction of its bits.
