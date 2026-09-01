@@ -107,7 +107,7 @@ def retrieve(num_neurons,weights,initial_pattern,t_MAX=10000):
 
   return X
 
-def retrieve_async(num_neurons,weights,initial_pattern,t_MAX=10000):
+def retrieve_async(num_neurons,weights,initial_pattern,t_MAX=100000):
   
   """
   Retrieve a stored pattern using asynchronous Hopfield dynamics.
@@ -289,7 +289,7 @@ def retrieve_all_sync(noisy_patterns, num_neurons, weights, num_memories):
 
    return retrieved_patterns
 
-def vizualize(original_patterns, noisy_patterns,retrieved_patterns, N, save):
+def vizualize(original_patterns, noisy_patterns,retrieved_patterns, N, save, figlabel = "pattern", recall = True):
 
     """
     Visualize original, noisy, and retrieved patterns as images.
@@ -314,24 +314,30 @@ def vizualize(original_patterns, noisy_patterns,retrieved_patterns, N, save):
         Always returns 0.
     """
 
-    for i,(O,No,R) in enumerate(zip(original_patterns, noisy_patterns,retrieved_patterns)):
-        matrix_O  =  O.reshape( int(math.sqrt(N)), int(math.sqrt(N)))
-        matrix_No = No.reshape( int(math.sqrt(N)), int(math.sqrt(N)))
-        matrix_R  =  R.reshape( int(math.sqrt(N)), int(math.sqrt(N)))
-        fig,ax = plt.subplots(nrows=1, ncols=3, figsize=(12,3))
-        ax[0].imshow(matrix_O , cmap='gray', interpolation='nearest')
-        ax[1].imshow(matrix_No, cmap='gray', interpolation='nearest')
-        ax[2].imshow(matrix_R , cmap='gray', interpolation='nearest')
-        ax[0].set_title(f"Original")
-        ax[1].set_title(f"Noisy")
-        ax[2].set_title(f"Recalled")
-        ax[0].axis('off')
-        ax[1].axis('off')
-        ax[2].axis('off')
-        if save == True:
-            fig.savefig(f"pattern_{i+1}.png")
-    
-    plt.show()
+    if recall == True:    
+        for i,(O,No,R) in enumerate(zip(original_patterns, noisy_patterns,retrieved_patterns)):
+            matrix_O  =  O.reshape( int(math.sqrt(N)), int(math.sqrt(N)))
+            matrix_No = No.reshape( int(math.sqrt(N)), int(math.sqrt(N)))
+            matrix_R  =  R.reshape( int(math.sqrt(N)), int(math.sqrt(N)))
+            fig,ax = plt.subplots(nrows=1, ncols=3, figsize=(12,3))
+            ax[0].imshow(matrix_O , cmap='gray', interpolation='nearest')
+            ax[1].imshow(matrix_No, cmap='gray', interpolation='nearest')
+            ax[2].imshow(matrix_R , cmap='gray', interpolation='nearest')
+            ax[0].set_title(f"Original", fontsize=20)
+            ax[1].set_title(f"Noisy", fontsize=20)
+            ax[2].set_title(f"Recalled", fontsize=20)
+            ax[0].axis('off')
+            ax[1].axis('off')
+            ax[2].axis('off')
+            if save == True:
+                fig.savefig(f"figures/{figlabel}_{i+1}.png",dpi = 600)
+        plt.show()
+
+    else:
+        matrix_O  =  original_patterns[0].reshape( int(math.sqrt(N)), int(math.sqrt(N)))
+        plt.imshow(matrix_O , cmap='gray', interpolation='nearest')
+        plt.axis('off')
+        plt.show()
 
     return None
 
@@ -924,7 +930,7 @@ def preprocessar_para_hopfield(img_path, size, threshold, swap_colors):
 
     return img_final, vetor
 
-def test_network(memory_list, weight_matrix, noise_level, synchronous=True):
+def test_network(memory_list, weight_matrix, noise_level, synchronous=True, Save = True, label = "pattern"):
     """
     Tests a trained Hopfield network by adding noise to stored patterns,
     retrieving them, and visualizing the results.
@@ -974,6 +980,9 @@ def test_network(memory_list, weight_matrix, noise_level, synchronous=True):
 
         Default is True.
 
+    Save : bool, optional
+        If True, saves the visualizations of the patterns to disk.
+
     Returns
     -------
     None
@@ -1006,10 +1015,10 @@ def test_network(memory_list, weight_matrix, noise_level, synchronous=True):
         retrieved_patterns = retrieve_all_sync(noisies, len(memory_list[0]), weight_matrix, len(memory_list))
     else:
         retrieved_patterns = retrieve_all_assync(noisies, len(memory_list[0]), weight_matrix, len(memory_list))
-    vizualize(memory_list, noisies, retrieved_patterns, len(memory_list[0]), save=False)
+    vizualize(memory_list, noisies, retrieved_patterns, len(memory_list[0]), save=Save, figlabel=label)
     return None
 
-def see_synapses(weights_matrix):
+def see_synapses(weights_matrix, save = True, figlabel = "Synaptic_Weights"):
     """
     Visualizes the synaptic weights of a Hopfield network as a heatmap.
 
@@ -1018,6 +1027,12 @@ def see_synapses(weights_matrix):
     weights_matrix : numpy.ndarray
         The weight matrix of the Hopfield network, typically of shape (N, N),
         where N is the number of neurons.
+
+    save : bool, optional
+        If True, saves the heatmap as a PNG file. Default is True.
+
+    figlabel : str, optional
+        The label for the figure file if saved. Default is "Synaptic_Weights".
 
     Returns
     -------
@@ -1034,12 +1049,14 @@ def see_synapses(weights_matrix):
     -------
     see_synapses(weights)
     """
-    plt.style.use('dark_background')
-    plt.imshow(weights_matrix, cmap='magma_r')  # colormap can be changed
+    #plt.style.use('dark_background')
+    plt.imshow(weights_matrix, cmap='Grays_r')  # colormap can be changed
     cbar = plt.colorbar()
     cbar.set_label("Neuron Correlation", fontsize=18)  # Label for colorbar
     cbar.set_ticks([])  # Show colorbar ticks
     plt.axis('off')  # Hide axes
     plt.title("Brain's Synaptic Weights", fontsize=20)  # Title for the heatmap
+    if save:
+        plt.savefig(f"figures/{figlabel}.png", dpi=600)  # Save the figure with high resolution
     plt.show()
     return None
