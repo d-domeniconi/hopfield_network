@@ -5,6 +5,7 @@ import cv2
 import math
 import itertools
 from scipy.stats import norm
+import random
 
 
 def train(num_neurons,patterns):
@@ -661,8 +662,7 @@ def extract_memories(weights, all_states, energy_threshold):
 
     return unique_potential_memories
 
-def energy_table(M,axis):
-
+def energy_table(M, axis, trainings=0):
     """
     Compute energies of fixed states over multiple random networks.
 
@@ -670,27 +670,39 @@ def energy_table(M,axis):
     ----------
     M : int
         Number of random weight realizations.
-    axis : list of ndarray
+    axis : list or ndarray
         States for which energies are computed.
+    train : int, optional
+        Number of pattern training iterations to perform on random weights.
 
     Returns
     -------
     list of list of float
         Energies for each realization.
     """
-
     N = len(axis[0])
-
     L = []
 
     for _ in range(M):
+        # 1. Initialize random weights for this realization
         W = random_weights(N)
 
-        L.append([current_energy(W, s) for s in list(axis)])
+        if trainings > 0:
+            # 2. Pick 'train' patterns at random with replacement
+            selected_patterns = random.choices(axis, k=trainings)
+            
+            # 3. Train on selected patterns and add to initial random weights
+            # Assuming hp.train(N, patterns) returns the weight matrix for those patterns
+            W_trained = train(N, selected_patterns)
+            W = W + W_trained
+
+        # 4. Compute energies of all target states under W
+        energies = [current_energy(W, s) for s in axis]
+        L.append(energies)
 
     return L
 
-def mean_energies(M,axis):
+def mean_energies(M,axis, Train=0):
 
     """
     Compute disorder-averaged energies of network states.
@@ -708,7 +720,7 @@ def mean_energies(M,axis):
         Mean energy of each state.
     """
     
-    L = np.array(energy_table(M, axis))
+    L = np.array(energy_table(M, axis, trainings = Train))
 
     
     mean_energies = L.mean(axis=0)
