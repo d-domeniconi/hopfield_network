@@ -715,7 +715,7 @@ def mean_energies(M,axis):
 
     return mean_energies
 
-def plot_energy_and_distribution(b, mean_energies_data, mu_val, sigma_val, title_suffix, plot_color='blue'):
+def plot_energy_and_distribution(b, mean_energies_data, plot_color='blue'):
 
     """
     Plot average energy landscape and its distribution.
@@ -745,10 +745,6 @@ def plot_energy_and_distribution(b, mean_energies_data, mu_val, sigma_val, title
     # Main subplot for average energy plot
     ax1 = fig.add_subplot(gs[0, :3])
     ax1.scatter(range(len(mean_energies_data)), mean_energies_data,s=20 , color=plot_color, label=f'{b}')
-    #ax1.set_title("Average Energy Landscapes for Hopfield Network",fontsize=18)
-    #ax1.set_xlabel(f'Network State {r"$\vec{\sigma}$"} (Sorted for Visualization)',fontsize=20)
-    #ax1.set_ylabel("Average Energy",fontsize=20)
-    #ax1.grid(True, linestyle='--', alpha=0.6)
     ax1.legend(fontsize = 30)
     
     plt.xticks(fontsize=20)
@@ -760,16 +756,6 @@ def plot_energy_and_distribution(b, mean_energies_data, mu_val, sigma_val, title
     ax2 = fig.add_subplot(gs[0, 3])
     counts, bins, _ = ax2.hist(mean_energies_data, bins=90, density=True, orientation='horizontal', color=plot_color, alpha=0.7, edgecolor='none', label='Histogram')
 
-    # Plot Gaussian PDF
-    #x_pdf = np.linspace(min(mean_energies_data), max(mean_energies_data), 100)
-    #y_pdf = norm.pdf(x_pdf, mu_val, sigma_val)
-    #ax2.plot(y_pdf, x_pdf, 'k-', linewidth=2)#, label=f'Gaussian (mu={mu_val:.2f}, sigma={sigma_val:.2f})')
-
-    #ax2.set_title("Energy Distribution",fontsize=20)
-    #ax2.set_xlabel("Density",fontsize=20)
-    #ax2.set_ylabel("Average Energy",fontsize=)
-    #ax2.grid(True, linestyle='--', alpha=0.6)
-    #ax2.legend()
     ax2.set_ylim(ax1.get_ylim())
     ax2.set_xscale('log')
     plt.xticks(fontsize=0)
