@@ -582,7 +582,7 @@ def sort_states(all_states, energies, memories):
         Sorted states.
     """
 
-    if not memories: 
+    if memories is None or len(memories) == 0: 
         combined = sorted(zip(energies, all_states), key=lambda item: item[0])
         return [state for energy, state in combined]
 
