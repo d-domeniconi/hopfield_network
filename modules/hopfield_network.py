@@ -1053,3 +1053,23 @@ def see_synapses(weights_matrix, save = True, figlabel = "Synaptic_Weights"):
         plt.savefig(f"figures/{figlabel}.png", dpi=600)  # Save the figure with high resolution
     plt.show()
     return None
+
+def plot_custom_energy_landscape(weights, state_axis, log = False):
+    """
+    Computes and plots the unsorted energy landscape along a custom state axis
+    using high-resolution presentation styling.
+    """
+    energies = [current_energy(weights, s) for s in state_axis]
+    
+    plt.figure(figsize=(15, 6))
+    plt.plot(energies, 'o-', linewidth=1.5, color='blue')
+    plt.title(f'Energy Landscape for a Random Hopfield Network', fontsize=28)
+    plt.xlabel(f'Network State {r"$\vec{\sigma}$"} (Initial Axis)', fontsize=28)
+    plt.ylabel("Energy", fontsize=28)
+    # plt.grid(True, linestyle='--', alpha=0.6)
+    plt.xticks(fontsize=21)
+    plt.yticks(fontsize=21)
+    if log:
+        plt.yscale('log')
+    plt.tight_layout()
+    plt.show()
