@@ -662,7 +662,7 @@ def extract_memories(weights, all_states, energy_threshold):
 
     return unique_potential_memories
 
-def energy_table(M, axis, trainings=0):
+def energy_table(M, axis, trainings = 0):
     """
     Compute energies of fixed states over multiple random networks.
 
@@ -683,26 +683,31 @@ def energy_table(M, axis, trainings=0):
     N = len(axis[0])
     L = []
 
+    # 1. Sorteia a(s) memória(s) UMA ÚNICA VEZ fora do loop M
+    W_trained = np.zeros((N, N))
+    if trainings > 0:
+        # Seleciona 'trainings' memórias fixas para este experimento
+        selected_patterns = random.choices(axis, k=trainings)
+        selected_patterns = np.atleast_2d(selected_patterns)
+        
+        # Treina a matriz de pesos com essas memórias fixas
+        W_trained = train(N, selected_patterns)
+
+    # 2. Avalia a MESMA memória treinada sobre M matrizes de ruído aleatórias
     for _ in range(M):
-        # 1. Initialize random weights for this realization
-        W = random_weights(N)
+        # Matriz de ruído/pesos aleatórios para esta realização
+        W_rand = random_weights(N)
+        
+        # Matriz final combina o ruído com a memória fixa
+        W = W_rand + W_trained
 
-        if trainings > 0:
-            # 2. Pick 'train' patterns at random with replacement
-            selected_patterns = random.choices(axis, k=trainings)
-            
-            # 3. Train on selected patterns and add to initial random weights
-            # Assuming hp.train(N, patterns) returns the weight matrix for those patterns
-            W_trained = train(N, selected_patterns)
-            W = W + W_trained
-
-        # 4. Compute energies of all target states under W
+        # Calcula a energia de todos os estados sob esta rede W
         energies = [current_energy(W, s) for s in axis]
         L.append(energies)
 
     return L
 
-def mean_energies(M,axis, Train=0):
+def mean_energies(M,axis, Train):
 
     """
     Compute disorder-averaged energies of network states.
@@ -720,14 +725,14 @@ def mean_energies(M,axis, Train=0):
         Mean energy of each state.
     """
     
-    L = np.array(energy_table(M, axis, trainings = Train))
+    L = np.array(energy_table(M, axis, Train))
 
     
     mean_energies = L.mean(axis=0)
 
     return mean_energies
 
-def plot_energy_and_distribution(b, mean_energies_data, plot_color='blue'):
+def plot_energy_and_distribution(b, mean_energies_data, plot_color='blue', savefig=True):
 
     """
     Plot average energy landscape and its distribution.
@@ -774,7 +779,8 @@ def plot_energy_and_distribution(b, mean_energies_data, plot_color='blue'):
     plt.yticks(fontsize=0)
     
     plt.tight_layout()
-    plt.savefig(f'Average_Visualization_2/(2)average_energy_{b}_trained_patterns.png',dpi = 600)
+    if savefig:
+        plt.savefig(f'figures/avg_energy_dist_{b}.png',dpi = 600)
     plt.show()
 
 def preprocessar_para_hopfield(img_path, size, threshold, swap_colors):
