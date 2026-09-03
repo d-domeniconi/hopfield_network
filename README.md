@@ -148,7 +148,7 @@ weights = hp.train(len(pattern), [pattern])
 
 **Storage capacity and spurious states.** Averaging the energy landscape over many random realizations, as the number of stored memories grows the landscape fragments into extra local minima — the statistical signature of the "hallucination" bands discussed above:
 
-![Energy distribution with 3 stored memories](figures/avg_energy_dist_D.png)
+![Energy distribution with 3 stored memories](figures/pre/fig_average_energy.png)
 
 The full derivation and every additional figure (convergence curves, synaptic-weight heatmaps, overlap spectra, etc.) are reproduced step by step in `learning_about_learning.ipynb`.
 
